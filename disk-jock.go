@@ -1,18 +1,40 @@
 package main
 
 import (
-  "dapplebeforedawn/ttyttr/api"
-  "dapplebeforedawn/ttyttr/view"
-  "dapplebeforedawn/ttyttr/options"
+  "dapplebeforedawn/disk-jock/system"
+  "dapplebeforedawn/disk-jock/dsp"
   "fmt"
+  "os"
 )
+// need 5 chunks to make a decent FFT
 
 func main() {
-  opts := opts.Options{}
-  opts.Parse()
+  c := make(chan []int32, 100000)
+  callback := func(in, out []int32) {
+    c <- in
+    copy(out, in)
+  }
 
-  tweet := api.NewTweet(opts.Tweet, opts.Endpoint, opts.Bearer)
-  data  := tweet.Get()
-  card  := view.NewCard(data, opts.Width)
-  fmt.Println(card)
+  go func(){
+    file, _ := os.Create("fft.dat")
+    for {
+      fft     := dsp.NewFFT()
+      done    := make(chan []int32)
+      collect := dsp.NewCollector(8, done)
+
+      go func(){
+        for {
+          data := <-c
+          if !collect.Add(data) { break }
+        }
+      }()
+
+      fullData := <-done
+      mags     := fft.FFT(fullData)
+      fmt.Fprintln(file, mags[10:len(mags)/2])
+    }
+  }()
+
+  sys := system.NewSystem(callback)
+  sys.Start()
 }
