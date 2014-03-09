@@ -1,7 +1,7 @@
 package matchtable
 
 import (
-  "strconv"
+  "fmt"
 )
 
 type MatchMaker struct {
@@ -11,7 +11,7 @@ type MatchMaker struct {
 type MatchSet [8]MatchPair
 type MatchPair struct {
   Magnitude float64
-  Frequency uint
+  Frequency int
 }
 
 func NewMatchMaker(data []float64) *MatchMaker {
@@ -27,7 +27,7 @@ func (m *MatchMaker) Extract() MatchSet {
   // into the matchSet.
 
   for i, data := range m.Data {
-    ejected := ms.TryAdd(uint(i), data)
+    ejected := ms.TryAdd(i, data)
     if(ejected != MatchPair{}) {
       ms.TryAdd(ejected.Frequency, ejected.Magnitude)
     }
@@ -36,7 +36,7 @@ func (m *MatchMaker) Extract() MatchSet {
   return ms
 }
 
-func (ms *MatchSet) TryAdd(freq uint, mag float64) MatchPair {
+func (ms *MatchSet) TryAdd(freq int, mag float64) MatchPair {
   ejected := MatchPair{}
   for i, matchPair := range ms {
     if mag > matchPair.Magnitude {
@@ -45,6 +45,7 @@ func (ms *MatchSet) TryAdd(freq uint, mag float64) MatchPair {
         Magnitude: mag,
         Frequency: freq,
       }
+      break
     }
   }
   return ejected
@@ -52,7 +53,7 @@ func (ms *MatchSet) TryAdd(freq uint, mag float64) MatchPair {
 
 func (ms *MatchSet) String() (s string) {
   for _, matchPair := range ms {
-    s = s + strconv.Itoa(int(matchPair.Frequency))
+    s = s + fmt.Sprintf("%05d", matchPair.Frequency)
   }
   return
 }

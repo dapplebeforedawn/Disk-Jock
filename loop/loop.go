@@ -40,10 +40,11 @@ func (l *Loop) runLoop(){
 
     go l.collectSamples(done)
 
-    fullData := <-done
-    mags     := fft.FFT(fullData)
+    fullData    := <-done
+    mags        := fft.FFT(fullData)
+    useableMags := mags[10:len(mags)/2]
 
-    l.loopback(mags)
+    l.loopback(useableMags)
   }
 }
 
