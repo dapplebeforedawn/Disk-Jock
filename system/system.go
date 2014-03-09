@@ -44,14 +44,16 @@ func (s *System) Start() {
 }
 
 func (s *System) initParams() {
-  inDev := s.Api.Devices[6] //4
+  // inDev := s.Api.Devices[6]
+  inDev := s.Api.Devices[4]
   s.InParams = portaudio.StreamDeviceParameters{
     Device: inDev,
     Channels: 2,
     Latency: inDev.DefaultLowOutputLatency,
   }
 
-  outDev := s.Api.Devices[1] //0
+  // outDev := s.Api.Devices[1]
+  outDev := s.Api.Devices[0]
   s.OutParams = portaudio.StreamDeviceParameters{
     Device: outDev,
     Channels: 2,
@@ -61,8 +63,10 @@ func (s *System) initParams() {
   s.StreamParams = portaudio.StreamParameters{
     Input: s.InParams,
     Output: s.OutParams,
-    SampleRate: s.Api.Devices[4].DefaultSampleRate,
+    SampleRate: inDev.DefaultSampleRate,
   }
+
+  print("Sample Rate: "); println(inDev.DefaultSampleRate)
 }
 
 func (s *System) deviceNames() {

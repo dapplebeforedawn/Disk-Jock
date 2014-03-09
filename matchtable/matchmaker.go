@@ -51,9 +51,13 @@ func (ms *MatchSet) TryAdd(freq int, mag float64) MatchPair {
   return ejected
 }
 
-func (ms *MatchSet) String() (s string) {
+func (ms *MatchSet) Finger() (finger int) {
   for _, matchPair := range ms {
-    s = s + fmt.Sprintf("%05d", matchPair.Frequency)
+    finger += matchPair.Frequency
   }
   return
+}
+
+func (ms *MatchSet) String() (s string) {
+  return fmt.Sprintf("%06d", ms.Finger())
 }

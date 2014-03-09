@@ -5,16 +5,18 @@ import (
   "dapplebeforedawn/disk-jock/dsp"
 )
 
-const SAMPLE_SIZE int = 8
+const SAMPLE_SIZE int = 1024
 const BUFFER_SIZE int = 100000
 
 type Loop struct {
-  callback system.Callback
-  channel  chan []int32
-  loopback Loopback
+  callback   system.Callback
+  channel    chan []int32
+  loopback   Loopback
+  Filledback Filledback
 }
 
-type Loopback func([]float64)
+type Loopback   func([]float64)
+type Filledback func([]int32)
 
 func NewLoop(cb system.Callback, lb Loopback) Loop {
   l := Loop{
@@ -42,7 +44,8 @@ func (l *Loop) runLoop(){
 
     fullData    := <-done
     mags        := fft.FFT(fullData)
-    useableMags := mags[10:len(mags)/2]
+    half        := len(mags)/2
+    useableMags := mags[:half]
 
     l.loopback(useableMags)
   }
@@ -54,6 +57,7 @@ func (l *Loop) collectSamples(done chan[]int32) {
     data := <-l.channel
     if !collect.Add(data) { break }
   }
+  l.Filledback(collect.Samples)
 }
 
 func (l *Loop) Start() {

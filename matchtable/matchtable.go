@@ -3,6 +3,7 @@ package matchtable
 import (
   "os"
   "bufio"
+  "fmt"
 )
 
 type MatchTable struct {
@@ -23,6 +24,9 @@ func (mt *MatchTable) HasMatch(data []float64) (found bool) {
   matchMaker := NewMatchMaker(data)
   matchSet   := matchMaker.Extract()
 
-  _, found = mt.Table[matchSet.String()]
-  return
+  m := fmt.Sprintf("%06d", matchSet.Finger())
+  _, found = mt.Table[m]
+  if found { return true }
+
+  return false
 }
