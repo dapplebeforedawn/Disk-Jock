@@ -3,12 +3,13 @@ package main
 import (
   "dapplebeforedawn/disk-jock/system"
   "dapplebeforedawn/disk-jock/dsp"
+  "dapplebeforedawn/disk-jock/matchtable"
   "fmt"
-  "os"
+  // "os"
 )
-// need 5 chunks to make a decent FFT
 
 func main() {
+  matchTable := matchtable.NewMatchTable()
   c := make(chan []int32, 100000)
   callback := func(in, out []int32) {
     c <- in
@@ -16,7 +17,7 @@ func main() {
   }
 
   go func(){
-    file, _ := os.Create("fft.dat")
+    // file, _ := os.Create("fft.dat")
     for {
       fft     := dsp.NewFFT()
       done    := make(chan []int32)
@@ -31,7 +32,10 @@ func main() {
 
       fullData := <-done
       mags     := fft.FFT(fullData)
-      fmt.Fprintln(file, mags[10:len(mags)/2])
+      // fmt.Fprintln(file, mags)
+
+      wasMatched := matchTable.HasMatch(mags[10:len(mags)/2])
+      fmt.Println(wasMatched)
     }
   }()
 
