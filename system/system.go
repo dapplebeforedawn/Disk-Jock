@@ -44,14 +44,14 @@ func (s *System) Start() {
 }
 
 func (s *System) initParams() {
-  inDev := s.Api.Devices[4] //6
+  inDev := s.Api.Devices[6] //4
   s.InParams = portaudio.StreamDeviceParameters{
     Device: inDev,
     Channels: 2,
     Latency: inDev.DefaultLowOutputLatency,
   }
 
-  outDev := s.Api.Devices[0] //1
+  outDev := s.Api.Devices[1] //0
   s.OutParams = portaudio.StreamDeviceParameters{
     Device: outDev,
     Channels: 2,
