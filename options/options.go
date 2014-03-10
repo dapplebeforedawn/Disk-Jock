@@ -20,7 +20,7 @@ func (o *Options) Parse() {
 
   flag.StringVar(&fftOutput, "fft", fftOutput, "output file for the FFT")
   flag.StringVar(&waveOut, "wav", waveOut, "output file for the raw wave")
-  flag.StringVar(&hashFile, "wav", hashFile, "the file containing the audio fingerprints")
+  flag.StringVar(&hashFile, "hash", hashFile, "the file containing the audio fingerprints")
   flag.Parse()
 
   o.FftOutput = fftOutput
