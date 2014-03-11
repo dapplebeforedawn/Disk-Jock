@@ -2,7 +2,7 @@ package dsp
 
 import (
   "github.com/mjibson/go-dsp/fft"
-  "github.com/mjibson/go-dsp/window"
+  // "github.com/mjibson/go-dsp/window"
   // "github.com/runningwild/go-fftw"
   "math"
 )
@@ -29,7 +29,7 @@ func (d *Dsp) fft(data []int32) []complex128 {
   for i := range data {
     data64[i] = float64(data[i])
   }
-  window.Apply(data64, window.Hamming)
+  // window.Apply(data64, window.Hamming)
   return fft.FFTReal(data64)
 }
 

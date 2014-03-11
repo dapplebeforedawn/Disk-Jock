@@ -5,8 +5,10 @@ import (
   "dapplebeforedawn/disk-jock/dsp"
 )
 
-const SAMPLE_SIZE int = 1024
-const BUFFER_SIZE int = 100000
+const SAMPLE_RATE   int = 44100
+const AUDIBLE_LIMIT int = 20000
+const SAMPLE_SIZE   int = 1024
+const BUFFER_SIZE   int = 100000
 
 type Loop struct {
   callback   system.Callback
@@ -42,10 +44,11 @@ func (l *Loop) runLoop(){
 
     go l.collectSamples(done)
 
+
     fullData    := <-done
     mags        := fft.FFT(fullData)
-    half        := len(mags)/2
-    useableMags := mags[:half]
+    lastAudible := AUDIBLE_LIMIT * SAMPLE_SIZE / SAMPLE_RATE
+    useableMags := mags[:lastAudible]
 
     l.loopback(useableMags)
   }
